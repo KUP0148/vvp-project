@@ -1,0 +1,13 @@
+{
+    "name_of_the_body" : {
+        "position" : [
+            0.2,
+            2
+        ],
+        "velocity" : [
+            0.2,
+            1e-10
+        ],
+        "mass" : 5
+    }
+}
