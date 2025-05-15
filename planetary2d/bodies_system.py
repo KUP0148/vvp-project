@@ -5,7 +5,7 @@
 The ``planetary2d.bodies_system`` module provides functionality for handling
 systems of bodies.
 
-Please note that the most important function ``load_json_data`` is present
+Please note that the most important class ``SystemOfBodies`` is present
 in the main ``planetary2d`` namespace.
 
 Classes, functions, constants and type aliases present in
@@ -41,7 +41,9 @@ Type aliases fro system of bodies
 from typing import Literal, List, Dict
 # from numba import jit
 import numpy as np
-from .data import POSITION, MASS, VELOCITY, try_structure
+import copy as cpy  # For copying SystemOfBodies
+from .data import POSITION, MASS, VELOCITY
+from .data import try_structure
 
 
 # Type alias definitions
@@ -285,7 +287,8 @@ class SystemOfBodies:
         R -= R.T
         # Check that bodies have different positions
         if ((R + np.eye(self.b_num)) == 0).any():
-            raise RuntimeError("Invalid positions: Two bodies at one position!")
+            raise RuntimeError(
+                "Invalid positions: Two bodies at one position!")
         return R
 
     def __assemble_matrix_K(self, R: MatrixOfVectors) -> MatrixOfScalars:
@@ -375,8 +378,9 @@ class SystemOfBodiesIterator:
         """
         Iterator's constructor.
         """
-        # Reference to the system of bodies to iterate
-        self.system_of_bodies = system_of_bodies
+        # Copy of the system of bodies to iterate
+        # Copy ensures that the former system is not affected
+        self.system_of_bodies = cpy.deepcopy(system_of_bodies)
         # Starting index (iterations stops if index >= system_of_bodies.limit)
         self.index = 0
 
