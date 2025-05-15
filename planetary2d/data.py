@@ -14,13 +14,13 @@ Constants and functions present in ``planetary2d.data`` listed below.
 
 Data handling constants
 -----------------------
-- __POSITION
-- __VELOCITY
-- __MASS
+- POSITION
+- VELOCITY
+- MASS
 
 Data handling functions
 -----------------------
-- __try_structure()
+- try_structure()
 
 JSON utilities functions
 ------------------------
@@ -33,14 +33,14 @@ import json
 
 
 # Constant string keywords for parameters of a body
-__POSITION = 'position'
-__VELOCITY = 'velocity'
-__MASS = 'mass'
+POSITION = 'position'
+VELOCITY = 'velocity'
+MASS = 'mass'
 # Constant for the dimension of vectors to load from data file (by default 2D)
 __VEC_DIM = 2
 
 
-def __try_structure(dict_data: dict) -> bool:
+def try_structure(dict_data: dict) -> bool:
     """
     Tries if the structure of ``dict_data`` complies with required pattern.
 
@@ -60,18 +60,18 @@ def __try_structure(dict_data: dict) -> bool:
         # - type of components of vectors is not a kind of a real number.
         try:
             if not (
-                (__POSITION in body
-                 and isinstance(body[__POSITION], list)
-                 and len(body[__POSITION]) == __VEC_DIM
-                 and all(isinstance(val, (float, int)) for val in body[__POSITION]))
+                (POSITION in body
+                 and isinstance(body[POSITION], list)
+                 and len(body[POSITION]) == __VEC_DIM
+                 and all(isinstance(val, (float, int)) for val in body[POSITION]))
                 and
-                (__VELOCITY in body
-                 and isinstance(body[__VELOCITY], list)
-                 and len(body[__VELOCITY]) == __VEC_DIM
-                 and all(isinstance(val, (float, int)) for val in body[__VELOCITY]))
+                (VELOCITY in body
+                 and isinstance(body[VELOCITY], list)
+                 and len(body[VELOCITY]) == __VEC_DIM
+                 and all(isinstance(val, (float, int)) for val in body[VELOCITY]))
                 and
-                (__MASS in body
-                 and isinstance(body[__MASS], (float, int)))):
+                (MASS in body
+                 and isinstance(body[MASS], (float, int)))):
                 return False
         except TypeError:
             return False
@@ -119,7 +119,7 @@ def load_json_data(path_to_json: str) -> dict:
         dict_data = json.load(infile)
 
     # Test the data structure
-    if not __try_structure(dict_data):
+    if not try_structure(dict_data):
         raise RuntimeError(
             "The JSON data file does not meet the prescribed structure!")
 

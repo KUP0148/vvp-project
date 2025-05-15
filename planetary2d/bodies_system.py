@@ -18,13 +18,13 @@ Classes for systems of bodies
 
 Constants for system of bodies
 ------------------------------
-- __T_UNITS
-- __T_UNITS_INV
-- __S_UNITS
-- __S_UNITS_INV
-- __M_UNITS
-- __M_UNITS_INV
-- __G
+- T_UNITS
+- T_UNITS_INV
+- S_UNITS
+- S_UNITS_INV
+- M_UNITS
+- M_UNITS_INV
+- G
 
 Type aliases fro system of bodies
 ---------------------------------
@@ -41,7 +41,7 @@ Type aliases fro system of bodies
 from typing import Literal, List, Dict
 # from numba import jit
 import numpy as np
-from .data import __POSITION, __MASS, __VELOCITY, __try_structure
+from .data import POSITION, MASS, VELOCITY, try_structure
 
 
 # Type alias definitions
@@ -54,37 +54,37 @@ MatrixOfVectors = np.ndarray[tuple[int, int], np.dtype[VectorType]]
 
 
 # Global constants for units
-__T_UNITS: Dict[str, float] = {
+T_UNITS: Dict[str, float] = {
     'millisecs': 0.001, 'secs': 1, 'mins': 60, 'hrs': 3600,
     'days': 86_400, 'wks': 604_800, 'months': 2_592_000,
     'yrs': 31_536_000}
 """
 Dictionary of units of time.
 """
-__T_UNITS_INV: Dict[float, str] = {v: k for k, v in __T_UNITS.items()}
+T_UNITS_INV: Dict[float, str] = {v: k for k, v in T_UNITS.items()}
 """
 Dictionary of units of time inverted.
 """
-__S_UNITS: Dict[str, float] = {
+S_UNITS: Dict[str, float] = {
     'mm': 0.001, 'cm': 0.01, 'm': 1, 'km': 1000}
 """
 Dictionary of units of space/distance.
 """
-__S_UNITS_INV: Dict[float, str] = {v: k for k, v in __S_UNITS.items()}
+S_UNITS_INV: Dict[float, str] = {v: k for k, v in S_UNITS.items()}
 """
 Dictionary of units of space/distance inverted.
 """
-__M_UNITS: Dict[str, float] = {
+M_UNITS: Dict[str, float] = {
     'mg': 0.000_1, 'g': 0.001, 'kg': 1, 't': 1}
 """
 Dictionary of units of mass.
 """
-__M_UNITS_INV: Dict[float, str] = {v: k for k, v in __M_UNITS.items()}
+M_UNITS_INV: Dict[float, str] = {v: k for k, v in M_UNITS.items()}
 """
 Dictionary of units of mass inverted.
 """
 # Global numerical constants
-__G: ScalarType = 6.674e-11
+G: ScalarType = 6.674e-11
 """
 Gravitational constant [m^3 kg^-1 s^-2]
 """
@@ -235,30 +235,30 @@ class SystemOfBodies:
         self.t_units: ScalarType = 0
         self.s_units: ScalarType = 0
         self.m_units: ScalarType = 0
-        self.lim: int = limit
+        self.limit: int = limit
         self.no_hist: bool = no_hist
         # == Try dict_data structure ==
-        if not _try_structure(dict_data):
+        if not try_structure(dict_data):
             raise RuntimeError(
                 "The dict_data does not meet the prescribed structure!")
         # == Parse dict_data ==
         for i, (body, data) in enumerate(dict_data.items()):
             self.labels.append(body)  # Body's label
-            self.pos[i] = data[_POSITION][0] + 1j * data[_POSITION][1]
-            self.vel[i] = data[_VELOCITY][0] + 1j * data[_VELOCITY][1]
-            self.mass[i] = data[_MASS]
+            self.pos[i] = data[POSITION][0] + 1j * data[POSITION][1]
+            self.vel[i] = data[VELOCITY][0] + 1j * data[VELOCITY][1]
+            self.mass[i] = data[MASS]
             # Check if masses are non-zero
             if self.mass[i] == 0:
                 raise RuntimeError("Invalid dict_data! Masses cannot be zero.")
         # == Setting units ==
-        if (time_units not in _T_UNITS
-                or space_units not in _S_UNITS
-                or mass_units not in _M_UNITS):
+        if (time_units not in T_UNITS
+                or space_units not in S_UNITS
+                or mass_units not in M_UNITS):
             raise ValueError("Invalid time_units! (see the docstring)")
         else:
-            self.t_units = _T_UNITS[time_units]
-            self.s_units = _S_UNITS[space_units]
-            self.m_units = _M_UNITS[mass_units]
+            self.t_units = T_UNITS[time_units]
+            self.s_units = S_UNITS[space_units]
+            self.m_units = M_UNITS[mass_units]
         # == Save first record in history ==
         if self.no_hist is False:
             self.hist: List[ArrayOfVectors] = []
@@ -283,6 +283,9 @@ class SystemOfBodies:
         # Subtracting transpose creates antisymmetric matrix
         # from the lower triangular one
         R -= R.T
+        # Check that bodies have different positions
+        if ((R + np.eye(self.b_num)) == 0).any():
+            raise RuntimeError("Invalid positions: Two bodies at one position!")
         return R
 
     def __assemble_matrix_K(self, R: MatrixOfVectors) -> MatrixOfScalars:
@@ -295,8 +298,8 @@ class SystemOfBodies:
         """
         K = np.outer(self.mass, self.mass)  # Create the product of masses
         # Gravitational constant in given units
-        __G_ = __G * (self.m_units * (self.t_units ** 2) / (self.s_units ** 3))
-        K *= __G_  # Multiply each coefficient by the gravitational constant
+        __G = G * (self.m_units * (self.t_units ** 2) / (self.s_units ** 3))
+        K *= __G  # Multiply each coefficient by the gravitational constant
         # To avoid division by zero on the main diagonal of R,
         # identity matrix is added (it does not affect R in neither context)
         R_ = R + np.eye(self.b_num)
@@ -307,16 +310,16 @@ class SystemOfBodies:
     def __assemble_array_F(self, FF: MatrixOfVectors) -> ArrayOfVectors:
         """
         Assembles array ``F`` of forces respective to each body.
-        In fact, it is a sum of each vectors in a column respective
+        In fact, it is a sum of each vectors in a row respective
         to a body. \n
         Note that this method does not affect the matrix FF of forces.
         """
         F = np.zeros((self.b_num), dtype=VectorType)
-        for row in range(self.b_num):
-            F += FF[:, row]  # Add whole row to the previous sum
+        for col in range(self.b_num):
+            F += FF[col, :]  # Add whole col to the previous sum
         return F
 
-    def __update_accelerations(self) -> None:
+    def update_accelerations(self) -> None:
         """
         Calculates accelerations of all bodies with respect to
         the current state of the system (positions)
@@ -336,7 +339,7 @@ class SystemOfBodies:
         # An array of vectors of accelerations respective to each body
         self.acc = F / self.mass  # Hadamard-like division
 
-    def __update_positions(self) -> None:
+    def update_positions(self) -> None:
         """
         Calculates positions with respect to the current state
         of the system (positions, velocities and accelerations) and
@@ -350,7 +353,7 @@ class SystemOfBodies:
         if self.no_hist is False:
             self.hist.append(self.pos.copy())
 
-    def __update_velocities(self) -> None:
+    def update_velocities(self) -> None:
         """
         Calculates velocities with respect to the current state
         of the system (positions, velocities and accelerations) and
@@ -360,19 +363,6 @@ class SystemOfBodies:
         """
         # Update velocities (v = v_0 + a*Δt)
         self.vel += self.acc * self.Δt
-
-    @property
-    def limit(self) -> int:
-        """
-        The limit at which to stop iterating this object. \n
-        Maximum number of changes of the system of bodies which
-        can be performed (i.e. only this number of steps can be done).
-        """
-        return self.lim
-
-    @limit.setter
-    def limit(self, limit: int):
-        self.lim = limit
 
 
 class SystemOfBodiesIterator:
@@ -401,8 +391,15 @@ class SystemOfBodiesIterator:
         if self.index >= self.system_of_bodies.limit:
             raise StopIteration
         else:
-            self.system_of_bodies.__update_accelerations()
-            self.system_of_bodies.__update_positions()
-            self.system_of_bodies.__update_velocities()
+            self.system_of_bodies.update_accelerations()
+            self.system_of_bodies.update_positions()
+            self.system_of_bodies.update_velocities()
             self.index += 1
         return self.system_of_bodies
+
+    def __len__(self):
+        """
+        Returns length, i.e. number of iterations. \n
+        It is used even by matplotlib for caching.
+        """
+        return self.system_of_bodies.limit

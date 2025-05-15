@@ -1,5 +1,7 @@
 """
-This is planetary2d.
+===========
+planetary2d
+===========
 
 Contains following modules:
 - animator.py - contains utilities for animating a system of bodies
@@ -17,10 +19,10 @@ classes and functions.
 """
 
 # Import API functions and classes from the modules
-from .animator import Animator, animate
-from .bodies_system import SystemOfBodies
-from .data import load_json_data
-from .random import Randomizer
+# from .animator import Animator, animate
+# from .bodies_system import SystemOfBodies
+# from .data import load_json_data
+# from .random import Randomizer
 
 
 # Set API.......
