@@ -42,15 +42,19 @@ def show_positions(x: SystemOfBodies):
 print("Construct Animator")
 # AN = Animator(x, 1000, no_units=True, )
 # AN = Animator(x, 1000, no_units=True, frame_rate=100, no_show=True)
-planets_clrs = ['yellow', 'red', 'red', 'green', 'orange', 'orange', 'gray', 'blue', 'blue']
+planets_clrs = ['yellow', 'red', 'red', 'green',
+                'orange', 'orange', 'gray', 'blue', 'blue']
 AN = Animator(x, 1000, no_units=False, units_box_color='green', frame_rate=100,
-              traj_colors=planets_clrs, colors=planets_clrs, label_color='white',
-              markersize=[40., 2., 2., 10., 10., 40., 30., 20., 20.],
+              traj_colors=planets_clrs, bdy_colors=planets_clrs, label_color='white',
+              bdy_sizes=[40., 2., 2., 10., 10., 40., 30., 20., 20.],
               xlimits=(-5e12, 5e12), ylimits=(-1e12, 1e12))
 print("show()")
 AN.show()
-# print("save()")
-# AN.save("./test.gif", 'gif')
-
+print("save('gif')")
+AN.save("./test.gif", 'gif')
+print("save('mp4')")
+AN.save("./test.mp4", 'mp4')
+print("save('avi')")
+AN.save("./test.avi", 'avi')
 print("show()")
 AN.show()

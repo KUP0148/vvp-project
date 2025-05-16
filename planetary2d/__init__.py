@@ -5,14 +5,17 @@ planetary2d
 
 Contains following modules:
 - animator.py - contains utilities for animating a system of bodies
-- bodies_system.py - contains ........
-- data - contains utilities for loading JSON files
-- random - contains utilities for generating random scenarios
+- bodies_system.py - contains classes for handling systems of bodies
+- data.py - contains utilities for handling data and loading JSON files
+- random.py - contains utilities for generating random scenarios
 
-API classes:
-- SystemOfBodies - represents...
-- Animator - represents...
-...
+API classes and functions:
+- SystemOfBodies - represents a system of bodies
+- Animator - represents an object that enables handling animations of
+the system of bodies
+- Randomizer - represents ...???????????????????????????????????
+- load_json_data() - serves to load data from a JSON file
+- animate() - serves to simply animate data
 
 More information to be found in docstrings of respective modules,
 classes and functions.

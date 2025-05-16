@@ -8,7 +8,7 @@ systems of bodies.
 Please note that the most important class ``SystemOfBodies`` is present
 in the main ``planetary2d`` namespace.
 
-Classes, functions, constants and type aliases present in
+Classes, constants and type aliases present in
 ``planetary2d.bodies_system`` listed below.
 
 Classes for systems of bodies
@@ -16,8 +16,8 @@ Classes for systems of bodies
 - SystemOfBodies
 - SystemOfBodiesIterator
 
-Constants for system of bodies
-------------------------------
+System of bodies' constants
+---------------------------
 - T_UNITS
 - T_UNITS_INV
 - S_UNITS
@@ -26,8 +26,8 @@ Constants for system of bodies
 - M_UNITS_INV
 - G
 
-Type aliases fro system of bodies
----------------------------------
+System of bodies' type aliases
+------------------------------
 - ScalarType
 - VectorType
 - ArrayOfScalars
@@ -217,7 +217,7 @@ class SystemOfBodies:
 
         :param limit: Maximum number of changes of the system of bodies which
             can be performed (i.e. only this number of steps can be done). \n
-            Note that this value can be re-set by the eponymous property
+            Note that this value can be re-set
             (and in combination with animation, this value is kept default
             in the constructor).
         :type limit: int
