@@ -14,22 +14,21 @@ API classes and functions:
 - Animator - represents an object that enables handling animations of
 the system of bodies,
 - Randomizer - represents a generator of random scenarios,
-- load_json_data() - serves to load data from a JSON file,
-- animate() - serves to animate data simply.
+- load_json_data() - serves to load data from a JSON file.
 
 More information to be found in docstrings of respective modules,
 classes and functions.
 """
 
 # Import API functions and classes from the modules
-from .animator import Animator, animate
+from .animator import Animator
 from .bodies_system import SystemOfBodies
 from .data import load_json_data
 from .random import Randomizer
 
 
 # Set API
-__all__: list[str] = ["Animator", "animate",
+__all__: list[str] = ["Animator",
                       "SystemOfBodies",
                       "load_json_data",
                       "Randomizer"]

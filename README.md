@@ -3,7 +3,7 @@ This is a repository that serves for submitting the project to Scientifical Comp
 Author: Timoteus KUP0148
 
 This Python package implements a small but simply extendable object-oriented framework for video visualization
-of 2D simulations of gravitational systems of bodies, particularly systems of planets. Saving into files is also possible.
+of 2D simulations of gravitational systems of bodies, particularly systems of planets. Saving into files is also possible. (Note that saving in `mp4` or `avi` requires `ffmpeg`)
 
 More information can be found in docstrings.
 
@@ -13,7 +13,8 @@ The package `planetary2d` consists of the following modules:
 - `animator` - a module for handling animations of a system of bodies,
 - `bodies_system` - a module implementing core computations of the simulations within one class,
 - `data` - a module for a deserialization and data-handling concerning systems of bodies,
-- `random` - a module for creating random systems of bodies.
+
+**TODO: - `random` - a module for creating random systems of bodies.**
 
 All modules are closely related to each other. The user interface of the package provides several classes and functions which are available from the `planetary2d` namespace.
 
@@ -21,8 +22,7 @@ Classes and functions designated for the user interface:
 - `SystemOfBodies` - represents a system of bodies (it is iterable),
 - `Animator` - represents a kind of controller for animations of a system of bodies,
 - `Randomizer` - represents a generator of random initial conditions of a system of bodies,
-- `load_json_data()` - serves to load data from a JSON file,
-- `animate()` - a convenience function to avoid the work with objects.
+- `load_json_data()` - serves to load data from a JSON file.
 
 
 ## Installation notes
@@ -44,9 +44,3 @@ If the base interval is small enough, the simulation is smooth and the degradati
 If the base interval is chosen too long, the approximation of the gravitational interactions
 breaks very soon, as the acceleration can vary a lot in the meanwhile and the error arising from the
 assumption of a constant acceleration over the base interval Δt may grow in a few discretized time steps.
-
-
-## BUGS:
-I have later stumbled upon a bug concerning Jupyter notebooks.
-If an animation is to be shown, a window with the animation is
-displayed twice. This does not happen in Python scripts.

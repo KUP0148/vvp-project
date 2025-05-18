@@ -5,9 +5,10 @@
 The ``planetary2d.animator`` module provides utilities for animating
 the system of bodies and exporting it to a video file.
 
-Only ``gif``, ``mp4`` and ``avi`` file types are supported.
+Only ``gif``, ``mp4`` and ``avi`` file types are supported. Nevertheless,
+``mp4`` and ``avi`` requires ``ffmpeg`` installed!
 
-Please note that the most important class ``Animator`` and function ``animate``
+Please note that the most important class ``Animator``
 is present in the main ``planetary2d`` namespace.
 
 Classes and functions present in ``planetary2d.animator`` listed below.
@@ -15,10 +16,6 @@ Classes and functions present in ``planetary2d.animator`` listed below.
 Animation classes
 -----------------
 - Animator
-
-Animation functions
--------------------
-- animate()
 
 Animation constants
 -------------------
@@ -287,8 +284,6 @@ class Animator:
         self.frame_rate = frame_rate
         self.no_show = no_show
         self.no_save = no_save
-        # == Create the animation ==
-        self.__create_animation()
 
     def __init_units(self) -> None:
         """
@@ -561,22 +556,18 @@ class Animator:
     def show(self) -> None:
         """
         Show animation based on the information from the constructor. \n
-        *Note that after call of this function the animation is destroyed
-        and then it is re-created anew!*
         """
         # Show animation if it has been chosen
         if self.no_show is True:
             raise RuntimeError("Requested operation cannot be performed "
                                "(showing animation disabled in ctor)!")
-        # Check if animation has already been created (this should never occur)
-        elif not hasattr(self, 'anim'):
-            raise RuntimeError("Requested operation cannot be performed "
-                               "(saving animation before its creation)!")
         else:
+            # Create the animation
+            self.__create_animation()
             # Display the animation (and it destroys it as well)
             plt.show()
-            # Create the animation anew as it was destoryed by plt.show()
-            self.__create_animation()
+            # Destroy the figure on which the animation depends
+            plt.close(self.fig)
 
     def save(self,
              path: str,
@@ -585,8 +576,6 @@ class Animator:
              bitrate: int = -1) -> None:
         """
         Saves the animation. \n
-        *Note that after call of this function the animation is exhausted
-        and then it is re-created anew to recover a pure animation object!* \n
         Codec of the output video is selected according to the extension of
         the file by the writer.
 
@@ -619,6 +608,8 @@ class Animator:
             raise ValueError("Invalid format of the output video file!")
         # Save
         else:
+            # Create the animation
+            self.__create_animation()
             # Set metadata
             metadata = {
                 'title': self.title,
@@ -640,22 +631,5 @@ class Animator:
                                bitrate=bitrate,
                                dpi=dpi,
                                metadata=metadata)
-            # Destroy figure
+            # Destroy the figure on which the animation depends
             plt.close(self.fig)
-            # Create the animation anew as it was affected by save()
-            # (it leaves the animation as if after iteration!)
-            self.__create_animation()
-
-
-def animate(necessary_data) -> None:
-    """
-    Convenience function for animating a system of bodies.
-    """
-    # TODO:
-    # Create Animator object
-    animator = Animator(necessary_data)
-    # Animate
-    animator.show()
-    # Save animation if it has been set
-    if 'save_animation' in necessary_data:
-        animator.save_animation()

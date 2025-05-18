@@ -8,9 +8,8 @@ setup(
     name='planetary2d',  # Name of the package
     version='1.0.0',  # Version of the package
     license='MIT',  # License of the package to be distributed under
-    packages=find_packages(),  #
-    # Packages required for this package (maybe 'numba')
+    packages=find_packages(),
+    # Packages required for this package
     install_requires=['numpy', 'matplotlib']
 )
-
-# For mp4 format it needs ffmpeg to be installed in the system!!!
+# For `mp4` format it needs `ffmpeg`` to be installed in the system!!!
