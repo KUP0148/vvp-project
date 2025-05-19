@@ -13,8 +13,7 @@ The package `planetary2d` consists of the following modules:
 - `animator` - a module for handling animations of a system of bodies,
 - `bodies_system` - a module implementing core computations of the simulations within one class,
 - `data` - a module for a deserialization and data-handling concerning systems of bodies,
-
-**TODO: - `random` - a module for creating random systems of bodies.**
+- `random` - a module for creating random systems of bodies.
 
 All modules are closely related to each other. The user interface of the package provides several classes and functions which are available from the `planetary2d` namespace.
 
@@ -38,9 +37,28 @@ You can find examples of usage of the package in `examples/examples.ipynb` Jupyt
 The 2D simulation of a system of bodies utilizes a time discretization (with the assumption of constant
 gravitational acceleration over a short period of time).
 As a consequence, there is a base discretization interval Δt whose length significantly influences
-the quality of the simulation. \
+the quality of the simulation.
+
 If the base interval is small enough, the simulation is smooth and the degradation
-(i.e. the accumulation of the errors) comes into being in much longer time. \
+(i.e. the accumulation of the errors) comes into being in much longer time.
+
 If the base interval is chosen too long, the approximation of the gravitational interactions
 breaks very soon, as the acceleration can vary a lot in the meanwhile and the error arising from the
 assumption of a constant acceleration over the base interval Δt may grow in a few discretized time steps.
+
+
+## Random generated systems of bodies
+It is worth mentioning that the random generated systems of bodies almost never can start orbiting
+in the manner the planets do, neither do the bodies fall into a common center.
+
+The reason for the former is simple: It needs some center of gravity, sufficient tangent velocities,
+suitable masses and smartly chosen initial positions, otherwise it should collapse.
+
+The reason for the latter lies deep in the nature of the discretization: Suppose the bodies start to
+collapse. The discretized motion causes that it is easy for a body in a stronger gravitational field to
+get a very very high acceleration in the direction towards another body (which is mutual) and in the base
+interval of discretization (no matter how short the interval is) such an acceleration fires the bodies
+very far from each other which then makes the gravitational force negligible with respect to the velocities
+they were inparted. It can be view even from the point that the acceleration changes enormously fast in close
+neighborhood of any gravitational body, and so the assumption of the constant acceleration over the base
+interval of discretization is significantly violated and the simulation degrades.
